@@ -58,8 +58,11 @@ public class UnTagCommand extends Command {
             throw new CommandException(String.format(MESSAGE_NOT_FOUND_TAG, tag.tagName, foodToTag.getName().fullName));
         }
 
-        foodToTag.removeTag(tag);
-        model.setFood(index, foodToTag); //To refresh the card
+        // use copy so that wont change the content of the original food
+        // since we need to save the original food for undo command
+        Food copy = foodToTag.toCopy();
+        copy.removeTag(tag);
+        model.setFood(index, copy); //To refresh the card
         return new CommandResult(String.format(MESSAGE_SUCCESS, tag.tagName));
     }
 }

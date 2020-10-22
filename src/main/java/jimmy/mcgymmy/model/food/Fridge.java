@@ -2,6 +2,7 @@ package jimmy.mcgymmy.model.food;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,10 +65,11 @@ public class Fridge implements Iterable<Food> {
     public void setFoods(List<Food> foods) {
         CollectionUtil.requireAllNonNull(foods);
         // copy all the items in foods
-        for (int i = 0; i < foods.size(); i++) {
-            foods.set(i, foods.get(i).toCopy());
+        ArrayList<Food> copyFoods = new ArrayList<>();
+        for (Food food : foods) {
+            copyFoods.add(food.toCopy());
         }
-        internalList.setAll(foods);
+        internalList.setAll(copyFoods);
     }
 
     /**
