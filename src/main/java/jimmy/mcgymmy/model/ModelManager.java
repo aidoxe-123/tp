@@ -5,12 +5,12 @@ import static java.util.Objects.requireNonNull;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.util.Pair;
 import jimmy.mcgymmy.commons.core.GuiSettings;
 import jimmy.mcgymmy.commons.core.LogsCenter;
 import jimmy.mcgymmy.commons.core.index.Index;
@@ -24,11 +24,12 @@ import jimmy.mcgymmy.model.food.Food;
 public class ModelManager implements Model {
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
 
-    private final Stack<ReadOnlyMcGymmy> mcGymmyStack = new Stack<>();
+    private final History history = new History();
 
     private final McGymmy mcGymmy;
     private final UserPrefs userPrefs;
     private final FilteredList<Food> filteredFoodItems;
+    private Predicate<Food> filterPredicate;
 
     /**
      * Initializes a ModelManager with the given mcGymmy and userPrefs.
@@ -128,7 +129,7 @@ public class ModelManager implements Model {
 
     @Override
     public boolean canUndo() {
-        return !mcGymmyStack.empty();
+        return !history.empty();
     }
 
     /**
@@ -137,14 +138,17 @@ public class ModelManager implements Model {
     @Override
     public void undo() {
         if (canUndo()) {
-            assert mcGymmyStack.size() > 0 : "McGymmyStack is empty";
-            mcGymmy.resetData(mcGymmyStack.pop());
-            updateFilteredFoodList(PREDICATE_SHOW_ALL_FOODS);
+            assert history.empty() : "McGymmyStack is empty";
+            Pair<McGymmy, Predicate<? super Food>> prevMcGymmyPredicatePair = history.pop();
+            McGymmy prevMcGymmy = prevMcGymmyPredicatePair.getKey();
+            Predicate<Food> prevPredicate = prevMcGymmyPredicatePair.getValue();
+            mcGymmy.resetData(prevMcGymmy);
+            updateFilteredFoodList(prevPredicate);
         }
     }
 
     private void addCurrentStateToHistory() {
-        mcGymmyStack.push(new McGymmy(mcGymmy));
+        history.push(new McGymmy(mcGymmy));
     }
 
     @Override
@@ -161,6 +165,11 @@ public class ModelManager implements Model {
         mcGymmy.setFoodItems(lst);
 
         filteredFoodItems.clear();
+    }
+
+    // package-private on purpose
+    Predicate<? super Food> getPredicate() {
+        return filteredFoodItems.getPredicate();
     }
 
     //=========== Filtered Food List Accessors =============================================================
