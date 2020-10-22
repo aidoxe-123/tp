@@ -43,6 +43,7 @@ public class ModelManager implements Model {
         this.mcGymmy = new McGymmy(mcGymmy);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredFoodItems = new FilteredList<>(this.mcGymmy.getFoodList());
+        filteredFoodItems.setPredicate(PREDICATE_SHOW_ALL_FOODS);
     }
 
     public ModelManager() {
