@@ -33,7 +33,6 @@ public class McGymmy implements ReadOnlyMcGymmy {
 
     /**
      * Replaces the contents of the Food list with {@code Foods}.
-     * {@code Foods} must not contain duplicate Foods.
      */
     public void setFoodItems(List<Food> foodItems) {
         this.foodItems.setFoods(foodItems);
