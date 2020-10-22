@@ -161,7 +161,7 @@ public class ModelManagerTest {
 
     @Test
     public void undo_undoMultipleTimes_mcGymmyHasCorrectContent() {
-        Food newChickenRice = new FoodBuilder(CHICKEN_RICE).withDate("2020-04-20").build();
+        Food newChickenRice = new FoodBuilder(CHICKEN_RICE).withDate("2020-04-12").build();
         Food newNasiLemak = new FoodBuilder().withTags("Lunch").build();
 
         McGymmy expected1 = new McGymmyBuilder().build();
