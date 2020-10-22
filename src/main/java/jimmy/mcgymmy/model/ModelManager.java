@@ -43,7 +43,8 @@ public class ModelManager implements Model {
         this.mcGymmy = new McGymmy(mcGymmy);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredFoodItems = new FilteredList<>(this.mcGymmy.getFoodList());
-        filteredFoodItems.setPredicate(PREDICATE_SHOW_ALL_FOODS);
+        filterPredicate = PREDICATE_SHOW_ALL_FOODS;
+        filteredFoodItems.setPredicate(filterPredicate);
     }
 
     public ModelManager() {
@@ -94,8 +95,9 @@ public class ModelManager implements Model {
 
     @Override
     public void setMcGymmy(ReadOnlyMcGymmy mcGymmy) {
-        addCurrentStateToHistory();
+        saveCurrentStateToHistory();
         this.mcGymmy.resetData(mcGymmy);
+        showAllFoods();
     }
 
     @Override
@@ -107,25 +109,25 @@ public class ModelManager implements Model {
     @Override
     public void deleteFood(Index index) {
         logger.fine("Delete food at index: " + index.getOneBased());
-        addCurrentStateToHistory();
+        saveCurrentStateToHistory();
         mcGymmy.removeFood(index);
     }
 
     @Override
     public void addFood(Food food) {
         logger.fine("Add food:\n" + food.toString());
-        addCurrentStateToHistory();
+        saveCurrentStateToHistory();
         mcGymmy.addFood(food);
-        updateFilteredFoodList(PREDICATE_SHOW_ALL_FOODS);
+        showAllFoods();
     }
 
     @Override
     public void setFood(Index index, Food editedFood) {
         CollectionUtil.requireAllNonNull(index, editedFood);
         logger.fine("Change food at index " + index.getOneBased() + "to food:\n" + editedFood.toString());
-        addCurrentStateToHistory();
+        saveCurrentStateToHistory();
         mcGymmy.setFood(index, editedFood);
-        updateFilteredFoodList(PREDICATE_SHOW_ALL_FOODS);
+        showAllFoods();
     }
 
     @Override
@@ -139,23 +141,22 @@ public class ModelManager implements Model {
     @Override
     public void undo() {
         if (canUndo()) {
-            assert history.empty() : "McGymmyStack is empty";
-            Pair<McGymmy, Predicate<? super Food>> prevMcGymmyPredicatePair = history.pop();
+            assert !history.empty() : "McGymmyStack is empty";
+            Pair<McGymmy, Predicate<Food>> prevMcGymmyPredicatePair = history.pop();
             McGymmy prevMcGymmy = prevMcGymmyPredicatePair.getKey();
             Predicate<Food> prevPredicate = prevMcGymmyPredicatePair.getValue();
             mcGymmy.resetData(prevMcGymmy);
-            updateFilteredFoodList(prevPredicate);
+            filteredFoodItems.setPredicate(prevPredicate);
         }
     }
 
-    private void addCurrentStateToHistory() {
-        history.push(new McGymmy(mcGymmy));
+    private void saveCurrentStateToHistory() {
+        history.save(this);
     }
 
     @Override
     public void clearFilteredFood() {
-        addCurrentStateToHistory();
-        Predicate<? super Food> filterPredicate = filteredFoodItems.getPredicate();
+        saveCurrentStateToHistory();
         List<Food> lst = new ArrayList<>();
         // prevent traversal error
         for (Food filteredFood : mcGymmy.getFoodList()) {
@@ -169,8 +170,8 @@ public class ModelManager implements Model {
     }
 
     // package-private on purpose
-    Predicate<? super Food> getPredicate() {
-        return filteredFoodItems.getPredicate();
+    Predicate<Food> getPredicate() {
+        return filterPredicate;
     }
 
     //=========== Filtered Food List Accessors =============================================================
@@ -184,11 +185,25 @@ public class ModelManager implements Model {
         return filteredFoodItems;
     }
 
+    // This method is for command usage only
+    // Do record the state of the model
+    // If anyone want to implement a method that show all food after changing the mcgymmy,
+    // use showAllFoods() instead
     @Override
     public void updateFilteredFoodList(Predicate<Food> predicate) {
         requireNonNull(predicate);
         logger.fine("Update predicate for filtered food list");
-        filteredFoodItems.setPredicate(predicate);
+        saveCurrentStateToHistory();
+        filterPredicate = predicate;
+        filteredFoodItems.setPredicate(filterPredicate);
+    }
+
+    /**
+     * Updates the predicate to show all food, does not record the state of the model
+     */
+    private void showAllFoods() {
+        filterPredicate = PREDICATE_SHOW_ALL_FOODS;
+        filteredFoodItems.setPredicate(filterPredicate);
     }
 
     @Override
