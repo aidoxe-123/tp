@@ -58,11 +58,8 @@ public class TagCommand extends Command {
             throw new CommandException(String.format(MESSAGE_DUPLICATE_TAG, tag.tagName, foodToTag.getName().fullName));
         }
 
-        // use copy so that wont change the content of the original food
-        // since we need to save the original food for undo command
-        Food copy = foodToTag.toCopy();
-        copy.addTag(tag);
-        model.setFood(index, copy); //To refresh the card
+        foodToTag.addTag(tag);
+        model.setFood(index, foodToTag); //To refresh the card
         return new CommandResult(String.format(MESSAGE_SUCCESS, tag.tagName));
     }
 }

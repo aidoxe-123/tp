@@ -100,7 +100,10 @@ public class Food {
      * @return a copy version that is independent of this food
      */
     public Food toCopy() {
-        Set<Tag> copyTags = new HashSet<>(tags);
+        Set<Tag> copyTags = new HashSet<>();
+        for (Tag tag : tags) {
+            copyTags.add(tag);
+        }
         return new Food(this.getName(), this.getProtein(), this.getFat(), this.getCarbs(), copyTags, this.getDate());
     }
 
