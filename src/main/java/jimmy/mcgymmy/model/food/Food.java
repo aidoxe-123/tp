@@ -35,7 +35,6 @@ public class Food {
     private final Set<Tag> tags = new HashSet<>();
 
 
-    //========================Constructor===========================================
     /**
      * Every field must be present and not null.
      */
@@ -92,19 +91,6 @@ public class Food {
      */
     public Food(Name name, Protein protein, Fat fat, Carbohydrate carbs, Set<Tag> tags) {
         this(name, protein, fat, carbs, tags, Date.currentDate());
-    }
-
-
-    //==================================Method=================================
-    /**
-     * @return a copy version that is independent of this food
-     */
-    public Food toCopy() {
-        Set<Tag> copyTags = new HashSet<>();
-        for (Tag tag : tags) {
-            copyTags.add(tag);
-        }
-        return new Food(this.getName(), this.getProtein(), this.getFat(), this.getCarbs(), copyTags, this.getDate());
     }
 
     private boolean isValidName(String test) {
@@ -171,8 +157,7 @@ public class Food {
                 && this.getProtein().equals(otherFood.getProtein())
                 && this.getCarbs().equals(otherFood.getCarbs())
                 && this.getFat().equals(otherFood.getFat())
-                && this.getDate().equals(otherFood.getDate())
-                && this.getTags().equals(otherFood.getTags());
+                && this.getDate().equals(otherFood.getDate());
     }
 
     // Displays

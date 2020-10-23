@@ -41,7 +41,7 @@ public class Fridge implements Iterable<Food> {
      */
     public void setFood(Index index, Food editedFood) {
         CollectionUtil.requireAllNonNull(editedFood, index);
-        internalList.set(index.getZeroBased(), editedFood.toCopy());
+        internalList.set(index.getZeroBased(), editedFood);
     }
 
     /**
@@ -63,10 +63,6 @@ public class Fridge implements Iterable<Food> {
      */
     public void setFoods(List<Food> foods) {
         CollectionUtil.requireAllNonNull(foods);
-        // copy all the items in foods
-        for (int i = 0; i < foods.size(); i++) {
-            foods.set(i, foods.get(i).toCopy());
-        }
         internalList.setAll(foods);
     }
 
