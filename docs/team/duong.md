@@ -45,7 +45,8 @@ Given below are my contributions to the project:
   
 * **Project management**:
   * Enabled assertion on Java CI [\#109](https://github.com/AY2021S1-CS2103T-W17-3/tp/pull/109) 
-
+  * Set due date for v1.4 milestone
+  
 * **Documentation**:
   * User Guide:
     * Added documentation for the `undo` feature [\#131](https://github.com/AY2021S1-CS2103T-W17-3/tp/pull/131)
