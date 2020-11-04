@@ -7,6 +7,9 @@ import javafx.geometry.Side;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.AnchorPane;
 
+/**
+ * Displays a pie chart that gives statistic about the total macronutrient values of the food items in McGymmy.
+ */
 public class SummaryDisplay extends UiPart<AnchorPane> {
     private static final String FXML = "SummaryDisplay.fxml";
     private static final String TOTAL_CALORIES_TEXT = "Total Calories %d";
