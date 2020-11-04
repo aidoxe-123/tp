@@ -175,7 +175,7 @@ public class ModelManager implements Model {
 
     @Override
     public boolean canUndo() {
-        return !history.empty();
+        return history.canUndo();
     }
 
     /**
@@ -184,16 +184,37 @@ public class ModelManager implements Model {
     @Override
     public void undo() {
         if (canUndo()) {
-            assert !history.empty() : "McGymmyStack is empty";
-            McGymmy prevMcGymmy = history.peekMcGymmy();
-            Predicate<Food> prevPredicate = history.peekPredicate();
-            MacroList macroList = history.peekMacroList();
-            history.pop();
+            assert history.canUndo() : "UndoStack is empty";
+            McGymmy prevMcGymmy = history.peekUndoMcGymmy();
+            Predicate<Food> prevPredicate = history.peekUndoPredicate();
+            MacroList macroList = history.peekUndoMacroList();
+            history.undo();
             mcGymmy.resetData(prevMcGymmy);
             updateFilterPredicate(prevPredicate);
             this.macroList = macroList;
         }
     }
+
+    @Override
+    public boolean canRedo() {
+        return history.canRedo();
+    }
+
+    @Override
+    public void redo() {
+        if (canRedo()) {
+            assert history.canRedo() : "RedoStack is empty";
+            McGymmy prevMcGymmy = history.peekRedoMcGymmy();
+            Predicate<Food> prevPredicate = history.peekRedoPredicate();
+            MacroList macroList = history.peekRedoMacroList();
+            history.redo();
+            mcGymmy.resetData(prevMcGymmy);
+            updateFilterPredicate(prevPredicate);
+            this.macroList = macroList;
+        }
+    }
+
+
 
     private void saveCurrentStateToHistory() {
         history.save(this);

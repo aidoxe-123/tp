@@ -9,10 +9,12 @@ import jimmy.mcgymmy.model.food.Food;
 import jimmy.mcgymmy.model.macro.MacroList;
 
 class History {
-    private final Stack<Pair<McGymmy, Pair<Predicate<Food>, MacroList>>> stack;
+    private final Stack<Pair<McGymmy, Pair<Predicate<Food>, MacroList>>> undoStack;
+    private final Stack<Pair<McGymmy, Pair<Predicate<Food>, MacroList>>> redoStack;
 
     History() {
-        stack = new Stack<>();
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
     }
 
     /**
@@ -22,38 +24,64 @@ class History {
         McGymmy mcGymmy = new McGymmy(modelManager.getMcGymmy());
         Predicate<Food> predicate = modelManager.getFilterPredicate();
         MacroList macroList = modelManager.getMacroList();
-        stack.push(new Pair<>(mcGymmy, new Pair<>(predicate, macroList)));
+        undoStack.push(new Pair<>(mcGymmy, new Pair<>(predicate, macroList)));
+        redoStack.clear();
+    }
+
+    boolean canUndo() {
+        return !undoStack.empty();
+    }
+
+    boolean canRedo() {
+        return !redoStack.empty();
     }
 
     /**
-     * @return True if the history is empty
-     */
-    boolean empty() {
-        return stack.empty();
-    }
-
-    /**
-     * Get the previous state from history
+     * Moves the previous state from undoStack to redoStack
      * @throws EmptyStackException
      */
-    void pop() throws EmptyStackException {
-        assert !stack.empty() : "History is empty";
-        stack.pop();
+    void undo() throws EmptyStackException {
+        assert !undoStack.empty() : "UndoStack is empty";
+        redoStack.push(undoStack.pop());
     }
 
-    McGymmy peekMcGymmy() throws EmptyStackException {
-        assert !stack.empty() : "History is empty";
-        return stack.peek().getKey();
+    /**
+     * Moves the previous state from redoStack to undoStack
+     * @throws EmptyStackException
+     */
+    void redo() throws EmptyStackException {
+        assert !redoStack.empty() : "RedoStack is empty";
+        undoStack.push(redoStack.pop());
     }
 
-    Predicate<Food> peekPredicate() throws EmptyStackException {
-        assert !stack.empty() : "History is empty";
-        return stack.peek().getValue().getKey();
+    McGymmy peekUndoMcGymmy() throws EmptyStackException {
+        assert !undoStack.empty() : "UndoStack is empty";
+        return undoStack.peek().getKey();
     }
 
-    MacroList peekMacroList() throws EmptyStackException {
-        assert !stack.empty() : "History is empty";
-        return stack.peek().getValue().getValue();
+    Predicate<Food> peekUndoPredicate() throws EmptyStackException {
+        assert !undoStack.empty() : "UndoStack is empty";
+        return undoStack.peek().getValue().getKey();
+    }
+
+    MacroList peekUndoMacroList() throws EmptyStackException {
+        assert !undoStack.empty() : "UndoStack is empty";
+        return undoStack.peek().getValue().getValue();
+    }
+
+    McGymmy peekRedoMcGymmy() throws EmptyStackException {
+        assert !redoStack.empty() : "RedoStack is empty";
+        return redoStack.peek().getKey();
+    }
+
+    Predicate<Food> peekRedoPredicate() throws EmptyStackException {
+        assert !redoStack.empty() : "RedoStack is empty";
+        return redoStack.peek().getValue().getKey();
+    }
+
+    MacroList peekRedoMacroList() throws EmptyStackException {
+        assert !redoStack.empty() : "RedoStack is empty";
+        return redoStack.peek().getValue().getValue();
     }
 }
 

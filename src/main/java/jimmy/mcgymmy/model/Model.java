@@ -98,14 +98,24 @@ public interface Model {
     void clearFilteredFood();
 
     /**
-     * Check if McGymmy can undo
+     * Checks if McGymmy can undo
      */
     boolean canUndo();
 
     /**
-     * Undo the previous change to mcGymmy
+     * Undoes the previous change to McGymmy
      */
     void undo();
+
+    /**
+     * Checks if McGymmy can redo
+     */
+    boolean canRedo();
+
+    /**
+     * Redoes the last undo command
+     */
+    void redo();
 
     /**
      * Returns an unmodifiable view of the filtered food list
