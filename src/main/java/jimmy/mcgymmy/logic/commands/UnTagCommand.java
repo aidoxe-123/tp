@@ -13,6 +13,9 @@ import jimmy.mcgymmy.model.Model;
 import jimmy.mcgymmy.model.food.Food;
 import jimmy.mcgymmy.model.tag.Tag;
 
+/**
+ * Remove a tag from the selected food item.
+ */
 public class UnTagCommand extends Command {
     public static final String COMMAND_WORD = "untag";
     public static final String SHORT_DESCRIPTION = "Remove a tag from the selected food item.";
