@@ -3,7 +3,7 @@ package jimmy.mcgymmy.logic.commands;
 import jimmy.mcgymmy.model.Model;
 
 /**
- * Undo the previous action cause by other commands (except help).
+ * Undo the previous action that causes changes to the ModelManager.
  */
 public class UndoCommand extends Command {
     public static final String COMMAND_WORD = "undo";

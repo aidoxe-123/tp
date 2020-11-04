@@ -13,7 +13,7 @@ import jimmy.mcgymmy.storage.JsonMcGymmyStorage;
 
 /**
  * Changes the data in mcgymmy to the data in the specified file.
- * File must be available and in correct format
+ * File must exist and be in correct format
  */
 public class ImportCommand extends Command {
 
@@ -22,6 +22,7 @@ public class ImportCommand extends Command {
 
     public static final String MESSAGE_IMPORT_FOOD_SUCCESS = "Imported %s";
     public static final String MESSAGE_IMPORT_FOOD_FAILURE = "File is invalid";
+    public static final String FILE_CONSTRAINTS = "Please select a valid .json file";
 
     private Parameter<Path> fileParameter = this.addParameter(
             "filepath",
